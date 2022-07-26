@@ -1,47 +1,52 @@
 package com.example.genesispractice.service;
 
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import com.example.genesispractice.model.Rate;
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
+@Service
 public class CoinMarketService {
-//    private final WebClient client;
-//
-//    public CoinMarketService(WebClient webClient) {
-//        this.client = webClient;
-//    }
+    private final WebClient client;
 
-    //    public String getResp(String url, String apiKey) {
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-//        headers.add("X-CMC_PRO_API_KEY", apiKey);
-//
-//        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url)
-//                .queryParam("start", "1")
-//                .queryParam("limit", "5000")
-//                .queryParam("convert", "USD");
-//
-//        restTemplate.exchange(builder.build().toUri(), HttpMethod.GET, )
-//    }
-    public String getResp(String url, String apiKey) {
-        Map<String, String> params = new HashMap<>();
-        params.put("start", "1");
-        params.put("limit", "5000");
-        params.put("convert", "USD");
-
-        WebClient client = WebClient.builder()
-                .baseUrl("url")
+    public CoinMarketService(WebClient.Builder webClientBuilder) {
+        this.client = webClientBuilder
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultHeader("X-CMC_PRO_API_KEY", apiKey)
-                .defaultUriVariables(params)
+                .baseUrl("https://pro-api.coinmarketcap.com")
                 .build();
+    }
+
+    public Optional<Double> getResp(String url, String apiKey, MultiValueMap<String, String> parameters) {
+        String response = client.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(url)
+                        .queryParams(parameters)
+                        .build())
+                .header("X-CMC_PRO_API_KEY", apiKey)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        return parseMonoUAHRate(response);
+    }
+
+    private Optional<Double> parseMonoUAHRate(String json) {
+        Rate rate = new Gson().fromJson(json, Rate.class);
+
+        if(rate.getInfo().size()!=1 || rate.getStatus().getError()!=0) {
+            return Optional.empty();
+        }
+
+        return Optional.of(JsonParser.parseString(json).getAsJsonObject()
+                .get("data").getAsJsonArray().get(0).getAsJsonObject()
+                .get("quote").getAsJsonObject()
+                .get("UAH").getAsJsonObject()
+                .get("price").getAsDouble());
     }
 }
