@@ -39,5 +39,6 @@ public class RestControllerRate {
     @PostMapping(value = "/sendEmails", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> sendEmail() {
         subscriptionService.sendMail(rateService.requestHryvniaRate().get());
+        return null;
     }
 }
