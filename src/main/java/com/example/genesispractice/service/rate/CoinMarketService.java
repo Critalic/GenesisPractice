@@ -8,16 +8,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMapAdapter;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service("CoinMarketCap")
 public class CoinMarketService implements RateService {
 
-    private static final String API_KEY = "03c90e1e-16ba-4d14-959a-52bbb624ab48"; //TODO get this as parameter
+    @Value("${coinMarketCap.api.key}")
+    private String apiKey;
     private final WebClient client;
 
 
@@ -31,7 +35,7 @@ public class CoinMarketService implements RateService {
     public Optional<String> requestHryvniaRate() {
         Map<String, List<String>> params = new HashMap<>();
         params.put("start", Collections.singletonList("1"));
-        params.put("limit", Collections.singletonList("1"));
+        params.put("limit", Collections.singletonList("5"));
         params.put("convert", Collections.singletonList("UAH"));
         params.put("aux", Collections.singletonList("date_added"));
 
@@ -40,16 +44,16 @@ public class CoinMarketService implements RateService {
                 .path("/v1/cryptocurrency/listings/latest")
                 .queryParams(new MultiValueMapAdapter<>(params))
                 .build())
-            .header("X-CMC_PRO_API_KEY", API_KEY)
+            .header("X-CMC_PRO_API_KEY", apiKey)
             .retrieve()
             .bodyToMono(String.class)
             .block();
 
-        return parseSingleRateToUAH(response);
+        return parseSingleRateToUAH(new Gson().fromJson(response, Rate.class), response);
     }
 
-    private Optional<String> parseSingleRateToUAH(String json) {
-        Rate rate = new Gson().fromJson(json, Rate.class);
+    private Optional<String> parseSingleRateToUAH(@Valid Rate rate, String json) {
+
 
         if (rate.getInfo().size() != 1 || rate.getStatus().getError() != 0) { //TODO add validator
             return Optional.empty();

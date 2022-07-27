@@ -1,11 +1,9 @@
 package com.example.genesispractice;
 
-import com.example.genesispractice.service.subscription.SubscriptionService;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
