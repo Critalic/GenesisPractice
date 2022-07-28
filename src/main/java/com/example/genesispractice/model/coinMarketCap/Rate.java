@@ -1,20 +1,16 @@
-package com.example.genesispractice.model;
+package com.example.genesispractice.model.coinMarketCap;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import javax.validation.constraints.Size;
 import lombok.Getter;
 
 @Getter
 public class Rate {
+    @NotNull(message = "API response status is null")
     private Status status;
 
-    @Null
-    @Size(max = 1)
+    @NotNull(message = "API response data is null")
     @SerializedName("data")
     private List<Object> info;
 }

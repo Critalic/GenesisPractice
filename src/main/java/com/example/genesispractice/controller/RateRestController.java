@@ -3,6 +3,7 @@ package com.example.genesispractice.controller;
 import com.example.genesispractice.service.rate.RateService;
 import com.example.genesispractice.service.subscription.SubscriptionService;
 import java.io.IOException;
+import java.util.Optional;
 import javax.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -18,14 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RequestMapping("api")
 @RestController
-public class RestControllerRate {
+public class RateRestController {
 
     private static final String EMAIL_PATTERN = "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$";
 
     private final RateService rateService;
     private final SubscriptionService subscriptionService;
 
-    public RestControllerRate(@Qualifier("CoinMarketCap") RateService service,
+    public RateRestController(@Qualifier("CoinMarketCap") RateService service,
                               @Qualifier("FileService") SubscriptionService subscriptionService) {
         this.rateService = service;
         this.subscriptionService = subscriptionService;
@@ -33,28 +34,28 @@ public class RestControllerRate {
 
     @GetMapping(value = "/rate", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getHryvniaRate() {
-        return rateService.requestHryvniaRate().map(ResponseEntity::ok)
+        return rateService.requestCurrencyRate("BTC", "UAH", 1).map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error"));
     }
 
     @PostMapping(value = "/subscribe", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> addSubscriber(@RequestParam
-                                                @Pattern(regexp = EMAIL_PATTERN) String email) {
-        try {
-            subscriptionService.addSubscriber(email);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
+    public ResponseEntity<String> addSubscriber(@RequestParam @Pattern(regexp = EMAIL_PATTERN,
+        message = "Please enter a valid e-mail") String email) throws IOException {
+
+        return subscriptionService.addSubscriber(email) ?
+            ResponseEntity.status(HttpStatus.OK).build() :
+            ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
     }
 
     @PostMapping(value = "/sendEmails", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> sendEmail() {
-        try {
-            subscriptionService.sendMail(rateService.requestHryvniaRate().get());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public ResponseEntity<String> sendEmail() throws IOException {
+        Optional<String> rate = rateService.requestCurrencyRate("BTC", "UAH", 1);
+
+        if (!rate.isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error");
         }
-        return null;
+
+        subscriptionService.sendMail(rate.get());
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
