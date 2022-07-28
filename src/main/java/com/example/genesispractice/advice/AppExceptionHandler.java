@@ -1,27 +1,20 @@
-package com.example.genesispractice.controller;
+package com.example.genesispractice.advice;
 
 import com.example.genesispractice.exception.RateServiceValidationException;
 import java.io.IOException;
-import javax.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice
-public class ValidationController {
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<String> handleConstraintViolation(ConstraintViolationException e) {
-        return new ResponseEntity<>("Request parameter validation exception: " + e, HttpStatus.BAD_REQUEST);
-    }
+@RestControllerAdvice()
+public class AppExceptionHandler {
 
     @ExceptionHandler(RateServiceValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<String> handleRateServiceValidationException(RateServiceValidationException e) {
-        return new ResponseEntity<>("Rate API error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body("Rate API error: " + e.getMessage());
     }
 
     @ExceptionHandler(IOException.class)

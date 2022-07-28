@@ -1,10 +1,8 @@
-package com.example.genesispractice.model.coinMarketCap;
+package com.example.genesispractice.model.cmc;
 
 import com.google.gson.annotations.SerializedName;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 public class Status {

@@ -1,7 +1,7 @@
 package com.example.genesispractice.service.rate;
 
 import com.example.genesispractice.exception.RateServiceValidationException;
-import com.example.genesispractice.model.coinMarketCap.Rate;
+import com.example.genesispractice.model.cmc.Rate;
 import java.util.Objects;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
