@@ -1,4 +1,4 @@
-package com.example.genesispractice.model.coinMarketCap;
+package com.example.genesispractice.model.cmc;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
@@ -7,6 +7,7 @@ import lombok.Getter;
 
 @Getter
 public class Rate {
+
     @NotNull(message = "API response status is null")
     private Status status;
 

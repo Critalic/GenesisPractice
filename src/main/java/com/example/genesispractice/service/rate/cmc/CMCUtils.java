@@ -12,7 +12,7 @@ public class CMCUtils {
     private CMCUtils() {
     }
 
-    static Optional<String> getRatePriceFromJson(String json, String fiatCurrency, String cryptoCurrency) {
+    static String getRatePriceFromJson(String json, String fiatCurrency, String cryptoCurrency) {
         JsonArray currencyArray = JsonParser.parseString(json).getAsJsonObject()
             .get("data").getAsJsonArray();
         JsonObject currencyNode = IntStream.range(0, currencyArray.size())
@@ -24,6 +24,7 @@ public class CMCUtils {
         return Optional.of(currencyNode
             .get("quote").getAsJsonObject()
             .get(fiatCurrency).getAsJsonObject()
-            .get("price").getAsString());
+            .get("price").getAsString()).orElseThrow(() -> new RateServiceValidationException(
+            "Requested currency's price is missing"));
     }
 }

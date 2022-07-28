@@ -3,7 +3,6 @@ package com.example.genesispractice.controller;
 import com.example.genesispractice.service.rate.RateService;
 import com.example.genesispractice.service.subscription.SubscriptionService;
 import java.io.IOException;
-import java.util.Optional;
 import javax.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -34,8 +33,7 @@ public class RateRestController {
 
     @GetMapping(value = "/rate", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getHryvniaRate() {
-        return rateService.requestCurrencyRate("BTC", "UAH", 1).map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error"));
+        return ResponseEntity.ok(rateService.requestCurrencyRate("BTC", "UAH", 1));
     }
 
     @PostMapping(value = "/subscribe", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -49,13 +47,7 @@ public class RateRestController {
 
     @PostMapping(value = "/sendEmails", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> sendEmail() throws IOException {
-        Optional<String> rate = rateService.requestCurrencyRate("BTC", "UAH", 1);
-
-        if (!rate.isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error");
-        }
-
-        subscriptionService.sendMail(rate.get());
+        subscriptionService.sendMail(rateService.requestCurrencyRate("BTC", "UAH", 1));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

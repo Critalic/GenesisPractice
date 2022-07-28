@@ -1,6 +1,6 @@
 package com.example.genesispractice.service.rate.cmc;
 
-import com.example.genesispractice.model.coinMarketCap.Rate;
+import com.example.genesispractice.model.cmc.Rate;
 import com.example.genesispractice.service.rate.RateService;
 import com.example.genesispractice.service.rate.ValidatorService;
 import com.google.gson.Gson;
@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -33,7 +32,7 @@ public class CoinMarketCapService implements RateService {
             .build();
     }
 
-    public Optional<String> requestCurrencyRate(String cryptoCurrency, String fiatCurrency, Integer responseSize) {
+    public String requestCurrencyRate(String cryptoCurrency, String fiatCurrency, Integer responseSize) {
         Map<String, List<String>> params = new HashMap<>();
         params.put("start", Collections.singletonList("1"));
         params.put("limit", Collections.singletonList(responseSize.toString()));
