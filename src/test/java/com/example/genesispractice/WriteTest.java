@@ -3,10 +3,13 @@ package com.example.genesispractice;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.stereotype.Component;
 
 @Component
+@Disabled
 class WriteTest {
     private static final String FILENAME="/home/vitalik/Documents/Emails.txt";
 
