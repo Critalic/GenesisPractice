@@ -1,15 +1,16 @@
 package com.example.genesispractice.service.subscription;
 
+import lombok.SneakyThrows;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.util.stream.Stream;
-import lombok.SneakyThrows;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Service;
 
 @Service("FileService")
 public class FileSubscriptionService implements SubscriptionService {
@@ -48,7 +49,7 @@ public class FileSubscriptionService implements SubscriptionService {
     private boolean emailAlreadyExists(String email, File file) throws IOException {
         try (Stream<String> emailStream = Files.lines(file.toPath())) {
             return emailStream
-                .anyMatch(line -> line.trim().equals(email.trim()));
+                    .anyMatch(line -> line.trim().equals(email.trim()));
         }
     }
 

@@ -2,11 +2,12 @@ package com.example.genesispractice.service.rate;
 
 import com.example.genesispractice.exception.RateServiceValidationException;
 import com.example.genesispractice.model.cmc.Rate;
-import java.util.Objects;
-import java.util.Set;
+import org.springframework.stereotype.Service;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import org.springframework.stereotype.Service;
+import java.util.Objects;
+import java.util.Set;
 
 @Service
 public class ValidatorService {
