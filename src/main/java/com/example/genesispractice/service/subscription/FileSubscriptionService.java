@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service("FileService")
 public class FileSubscriptionService implements SubscriptionService {
 
-    private final File file = new File("/home/vitalik/Documents/Emails.txt");
+    private final File file = new File("F:\\Real Intellij projects\\GenesisPractice\\Emails.txt");
 
     private final JavaMailSender mailSender;
 

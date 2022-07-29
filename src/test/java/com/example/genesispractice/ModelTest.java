@@ -5,10 +5,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+@Disabled
 public class ModelTest {
     String json = "{\n" +
             "    \"status\": {\n" +
