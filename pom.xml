@@ -73,6 +73,6 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
     </plugins>
+    <finalName>gses2-btc-spring</finalName>
   </build>
-
 </project>
