@@ -22,10 +22,15 @@ public class CMCUtils {
                 .findFirst().orElseThrow(() -> new RateServiceValidationException("Response doesn't contain the requested "
                         + "currency"));
 
-        return Optional.of(currencyNode
+        try {
+            return Optional.of(currencyNode
                 .get("quote").getAsJsonObject()
                 .get(fiatCurrency).getAsJsonObject()
                 .get("price").getAsString()).orElseThrow(() -> new RateServiceValidationException(
                 "Requested currency's price is missing"));
+        } catch (NullPointerException e) {
+            throw new RateServiceValidationException("Failed to parse the response");
+        }
+
     }
 }
